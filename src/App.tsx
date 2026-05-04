@@ -1,6 +1,21 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+interface Exercise {
+  id: number;
+  name: string;
+  sets: string;
+  reps: string;
+  weight: string;
+  muscle: string;
+}
+
+interface Workout {
+  id: number;
+  date: string;
+  exercises: Exercise[];
+}
+
 const translations = {
   pt: {
     loginTitle: "Bem-vindo ao PumPinscher",
@@ -95,27 +110,9 @@ type Lang = keyof typeof translations;
 type Key = keyof typeof translations['pt'];
 
 const motivationalQuotes = {
-  pt: [
-    "Tudo posso naquele que me fortalece. — Filipenses 4:13",
-    "Não temas, pois eu sou contigo. — Isaías 41:10",
-    "O Senhor é a minha força e o meu escudo. — Salmos 28:7",
-    "A dor de hoje é a força de amanhã.",
-    "Disciplina é a ponte entre seus objetivos e suas conquistas."
-  ],
-  es: [
-    "Todo lo puedo en Cristo que me fortalece. — Filipenses 4:13",
-    "No temas, porque yo estoy contigo. — Isaías 41:10",
-    "El Señor es mi fortaleza y mi escudo. — Salmos 28:7",
-    "El dolor de hoy es la fuerza de mañana.",
-    "La disciplina es el puente entre tus objetivos y tus logros."
-  ],
-  en: [
-    "I can do all things through Christ who strengthens me. — Philippians 4:13",
-    "Fear not, for I am with you. — Isaiah 41:10",
-    "The Lord is my strength and my shield. — Psalms 28:7",
-    "Today's pain is tomorrow's strength.",
-    "Discipline is the bridge between your goals and your achievements."
-  ]
+  pt: ["Tudo posso naquele que me fortalece. — Filipenses 4:13", "Não temas, pois eu sou contigo. — Isaías 41:10", "O Senhor é a minha força e o meu escudo. — Salmos 28:7", "A dor de hoje é a força de amanhã.", "Disciplina é a ponte entre seus objetivos e suas conquistas."],
+  es: ["Todo lo puedo en Cristo que me fortalece. — Filipenses 4:13", "No temas, porque yo estoy contigo. — Isaías 41:10", "El Señor es mi fortaleza y mi escudo. — Salmos 28:7", "El dolor de hoy es la fuerza de mañana.", "La disciplina es el puente entre tus objetivos y tus logros."],
+  en: ["I can do all things through Christ who strengthens me. — Philippians 4:13", "Fear not, for I am with you. — Isaiah 41:10", "The Lord is my strength and my shield. — Psalms 28:7", "Today's pain is tomorrow's strength.", "Discipline is the bridge between your goals and your achievements."]
 } as const;
 
 const muscleGroups = {
@@ -134,10 +131,10 @@ function App() {
   const [targetPage, setTargetPage] = useState<string | null>(null);
 
   const [currentQuote, setCurrentQuote] = useState(0);
-  const [currentWorkout, setCurrentWorkout] = useState<any[]>([]);
+  const [currentWorkout, setCurrentWorkout] = useState<Exercise[]>([]);
   const [newExercise, setNewExercise] = useState({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   const [toast, setToast] = useState('');
-  const [workoutHistory, setWorkoutHistory] = useState<any[]>([]);
+  const [workoutHistory, setWorkoutHistory] = useState<Workout[]>([]);
 
   const t = (key: Key) => translations[currentLang][key] || key;
 
@@ -156,7 +153,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote(prev => (prev + 1) % motivationalQuotes[currentLang].length);
-    }, 300000); // 5 minutos
+    }, 300000);
     return () => clearInterval(interval);
   }, [currentLang]);
 
@@ -173,13 +170,13 @@ function App() {
 
   const addExercise = () => {
     if (!newExercise.name || !newExercise.muscle) return;
-    setCurrentWorkout([...currentWorkout, { ...newExercise, id: Date.now() }]);
+    setCurrentWorkout([...currentWorkout, { ...newExercise, id: Date.now() } as Exercise]);
     setNewExercise({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   };
 
   const saveWorkout = () => {
     if (currentWorkout.length === 0) return;
-    const newEntry = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), exercises: [...currentWorkout] };
+    const newEntry: Workout = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), exercises: [...currentWorkout] };
     const updated = [newEntry, ...workoutHistory];
     setWorkoutHistory(updated);
     localStorage.setItem('workoutHistory', JSON.stringify(updated));
@@ -310,7 +307,7 @@ function App() {
               workoutHistory.map(w => (
                 <div key={w.id} className="bg-zinc-900 rounded-3xl p-8 mb-6">
                   <p className="text-orange-400 text-sm mb-4">{w.date}</p>
-                  {w.exercises.map(ex => (
+                  {w.exercises.map((ex: Exercise) => (
                     <div key={ex.id} className="flex justify-between bg-zinc-800 rounded-2xl p-4 mb-3">
                       <div>
                         <p className="font-medium">{ex.name}</p>
