@@ -89,7 +89,10 @@ const translations = {
     weeklyProgress: "Weekly Progress",
     forceDetermination: "— Strength and determination"
   }
-};
+} as const;
+
+type Lang = keyof typeof translations;
+type Key = keyof typeof translations['pt'];
 
 const motivationalQuotes = {
   pt: [
@@ -113,33 +116,33 @@ const motivationalQuotes = {
     "Today's pain is tomorrow's strength.",
     "Discipline is the bridge between your goals and your achievements."
   ]
-};
+} as const;
 
 const muscleGroups = {
   pt: ["Peito", "Costas", "Ombros", "Braços", "Pernas", "Abdômen", "Panturrilha"],
   es: ["Pecho", "Espalda", "Hombros", "Brazos", "Piernas", "Abdomen", "Pantorrilla"],
   en: ["Chest", "Back", "Shoulders", "Arms", "Legs", "Abs", "Calves"]
-};
+} as const;
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [currentLang, setCurrentLang] = useState('pt');
+  const [currentLang, setCurrentLang] = useState<Lang>('pt');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [targetPage, setTargetPage] = useState(null);
+  const [targetPage, setTargetPage] = useState<string | null>(null);
 
   const [currentQuote, setCurrentQuote] = useState(0);
-  const [currentWorkout, setCurrentWorkout] = useState([]);
+  const [currentWorkout, setCurrentWorkout] = useState<any[]>([]);
   const [newExercise, setNewExercise] = useState({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   const [toast, setToast] = useState('');
-  const [workoutHistory, setWorkoutHistory] = useState([]);
+  const [workoutHistory, setWorkoutHistory] = useState<any[]>([]);
 
-  const t = (key) => translations[currentLang][key] || key;
+  const t = (key: Key) => translations[currentLang][key] || key;
 
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isValidPassword = (pass) => pass.length >= 6;
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidPassword = (pass: string) => pass.length >= 6;
   const canLogin = isValidEmail(email) && isValidPassword(password);
 
   const handleLogin = () => { if (canLogin) setIsLoggedIn(true); };
@@ -150,7 +153,6 @@ function App() {
     }
   };
 
-  // Rotação de frases a cada 5 minutos
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote(prev => (prev + 1) % motivationalQuotes[currentLang].length);
@@ -158,7 +160,7 @@ function App() {
     return () => clearInterval(interval);
   }, [currentLang]);
 
-  const changePage = (page) => {
+  const changePage = (page: string) => {
     if (page === currentPage || isTransitioning) return;
     setTargetPage(page);
     setIsTransitioning(true);
@@ -186,7 +188,6 @@ function App() {
     setCurrentWorkout([]);
   };
 
-  // ==================== LOGIN SCREEN ====================
   const renderLogin = () => (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 to-black p-6">
       <div className="w-full max-w-md bg-zinc-900 rounded-3xl p-10 shadow-2xl border border-orange-400/10">
@@ -214,7 +215,6 @@ function App() {
     </div>
   );
 
-  // ==================== APP PRINCIPAL ====================
   const renderMainApp = () => (
     <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-black to-zinc-900 text-white">
       <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-2xl border-b border-orange-500">
@@ -328,7 +328,6 @@ function App() {
         {currentPage === 'perfil' && <div className="text-center py-20 text-3xl text-orange-400">Perfil em desenvolvimento...</div>}
       </main>
 
-      {/* ANIMAÇÃO */}
       <AnimatePresence>
         {isTransitioning && (
           <motion.div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
