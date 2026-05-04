@@ -1,21 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface Exercise {
-  id: number;
-  name: string;
-  sets: string;
-  reps: string;
-  weight: string;
-  muscle: string;
-}
-
-interface Workout {
-  id: number;
-  date: string;
-  exercises: Exercise[];
-}
-
 const translations = {
   pt: {
     loginTitle: "Bem-vindo ao PumPinscher",
@@ -44,7 +29,9 @@ const translations = {
     totalVolume: "VOLUME TOTAL",
     currentStreak: "STREAK ATUAL",
     weeklyProgress: "Progresso Semanal",
-    forceDetermination: "— Força e determinação"
+    forceDetermination: "— Força e determinação",
+    tagline: "o pinscher que não desiste",
+    profileComingSoon: "Perfil em desenvolvimento..."
   },
   es: {
     loginTitle: "Bienvenido a PumPinscher",
@@ -73,7 +60,9 @@ const translations = {
     totalVolume: "VOLUMEN TOTAL",
     currentStreak: "RÁCHA ACTUAL",
     weeklyProgress: "Progreso Semanal",
-    forceDetermination: "— Fuerza y determinación"
+    forceDetermination: "— Fuerza y determinación",
+    tagline: "el pinscher que no se rinde",
+    profileComingSoon: "Perfil en desarrollo..."
   },
   en: {
     loginTitle: "Welcome to PumPinscher",
@@ -102,7 +91,9 @@ const translations = {
     totalVolume: "TOTAL VOLUME",
     currentStreak: "CURRENT STREAK",
     weeklyProgress: "Weekly Progress",
-    forceDetermination: "— Strength and determination"
+    forceDetermination: "— Strength and determination",
+    tagline: "the pinscher that never gives up",
+    profileComingSoon: "Profile under development..."
   }
 } as const;
 
@@ -131,10 +122,10 @@ function App() {
   const [targetPage, setTargetPage] = useState<string | null>(null);
 
   const [currentQuote, setCurrentQuote] = useState(0);
-  const [currentWorkout, setCurrentWorkout] = useState<Exercise[]>([]);
+  const [currentWorkout, setCurrentWorkout] = useState<any[]>([]);
   const [newExercise, setNewExercise] = useState({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   const [toast, setToast] = useState('');
-  const [workoutHistory, setWorkoutHistory] = useState<Workout[]>([]);
+  const [workoutHistory, setWorkoutHistory] = useState<any[]>([]);
 
   const t = (key: Key) => translations[currentLang][key] || key;
 
@@ -170,13 +161,13 @@ function App() {
 
   const addExercise = () => {
     if (!newExercise.name || !newExercise.muscle) return;
-    setCurrentWorkout([...currentWorkout, { ...newExercise, id: Date.now() } as Exercise]);
+    setCurrentWorkout([...currentWorkout, { ...newExercise, id: Date.now() }]);
     setNewExercise({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   };
 
   const saveWorkout = () => {
     if (currentWorkout.length === 0) return;
-    const newEntry: Workout = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), exercises: [...currentWorkout] };
+    const newEntry = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), exercises: [...currentWorkout] };
     const updated = [newEntry, ...workoutHistory];
     setWorkoutHistory(updated);
     localStorage.setItem('workoutHistory', JSON.stringify(updated));
@@ -192,7 +183,7 @@ function App() {
           <img src="/pinscher-mascot.png" alt="PumPinscher" className="w-32 h-32 object-contain drop-shadow-2xl" />
         </div>
         <h1 className="text-4xl font-black text-center text-white mb-2">{t('loginTitle')}</h1>
-        <p className="text-orange-400 text-center mb-10">o pinscher que não desiste</p>
+        <p className="text-orange-400 text-center mb-10">{t('tagline')}</p>
 
         <div className="mb-8">
           <label className="block text-orange-300 text-sm mb-3 text-center">{t('selectLanguage')}</label>
@@ -304,10 +295,10 @@ function App() {
             {workoutHistory.length === 0 ? (
               <p className="text-zinc-400 text-center py-12">{t('noWorkouts')}</p>
             ) : (
-              workoutHistory.map(w => (
+              workoutHistory.map((w: any) => (
                 <div key={w.id} className="bg-zinc-900 rounded-3xl p-8 mb-6">
                   <p className="text-orange-400 text-sm mb-4">{w.date}</p>
-                  {w.exercises.map((ex: Exercise) => (
+                  {w.exercises.map((ex: any) => (
                     <div key={ex.id} className="flex justify-between bg-zinc-800 rounded-2xl p-4 mb-3">
                       <div>
                         <p className="font-medium">{ex.name}</p>
@@ -322,7 +313,7 @@ function App() {
           </div>
         )}
 
-        {currentPage === 'perfil' && <div className="text-center py-20 text-3xl text-orange-400">Perfil em desenvolvimento...</div>}
+        {currentPage === 'perfil' && <div className="text-center py-20 text-3xl text-orange-400">{t('profileComingSoon')}</div>}
       </main>
 
       <AnimatePresence>
