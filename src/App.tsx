@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE = 'http://localhost:3000/api/workouts';
+const API_BASE = 'https://pumpinscher-backend.onrender.com/api/workouts';
 
 const translations = {
   pt: {
