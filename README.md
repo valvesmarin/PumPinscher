@@ -80,7 +80,7 @@ PumPinscher/
 │   └── pinscher-puxando.png
 └── README.md
 
-👨‍💻 Author
+## 👨‍💻 Author
 Vitor Marin
 Student developer passionate about clean code, great UX, and building useful tools.
 This project was developed as part of my full-stack training, combining modern frontend techniques with a solid backend architecture.
