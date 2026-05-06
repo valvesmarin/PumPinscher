@@ -48,7 +48,7 @@ const translations = {
     legs: "Pernas",
     shoulders: "Ombros",
     fullBody: "Full Body",
-    workoutName: "Nome do Treino (opcional)",
+    workoutName: "Nome do Treino",
     addMoreExercises: "Adicionar mais exercícios manualmente",
     startTimer: "Iniciar",
     pauseTimer: "Pausar",
@@ -74,7 +74,11 @@ const translations = {
     recommendedPushPull6: "Push/Pull/Legs 6 dias",
     recommendedUpperLower4: "Upper/Lower 4 dias",
     recommendedCircuitHIIT: "Circuit Training + HIIT",
-    recommendedFullBodyCardio: "Full Body com Cardio"
+    recommendedFullBodyCardio: "Full Body com Cardio",
+    setsLabel: "Séries",
+    repsLabel: "Repetições",
+    weightLabel: "Peso (kg)",
+    edit: "Editar"
   },
   es: {
     loginTitle: "Bienvenido a PumPinscher",
@@ -146,7 +150,11 @@ const translations = {
     recommendedPushPull6: "Push/Pull/Legs 6 días",
     recommendedUpperLower4: "Upper/Lower 4 días",
     recommendedCircuitHIIT: "Circuit Training + HIIT",
-    recommendedFullBodyCardio: "Full Body con Cardio"
+    recommendedFullBodyCardio: "Full Body con Cardio",
+    setsLabel: "Series",
+    repsLabel: "Repeticiones",
+    weightLabel: "Peso (kg)",
+    edit: "Editar"
   },
   en: {
     loginTitle: "Welcome to PumPinscher",
@@ -218,7 +226,11 @@ const translations = {
     recommendedPushPull6: "Push/Pull/Legs 6 days",
     recommendedUpperLower4: "Upper/Lower 4 days",
     recommendedCircuitHIIT: "Circuit + HIIT",
-    recommendedFullBodyCardio: "Full Body + Cardio"
+    recommendedFullBodyCardio: "Full Body + Cardio",
+    setsLabel: "Sets",
+    repsLabel: "Reps",
+    weightLabel: "Weight (kg)",
+    edit: "Edit"
   }
 } as const;
 
@@ -280,7 +292,11 @@ function App() {
       totalReps: currentWorkout.reduce((acc: number, ex: any) => acc + (parseInt(ex.reps) || 0), 0)
     };
     try {
-      const res = await fetch(API_BASE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const res = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       if (res.ok) {
         setToast(t('toastSaved'));
         fetchWorkouts(currentUser.email);
@@ -292,8 +308,9 @@ function App() {
 
   useEffect(() => {
     let interval: number | null = null;
-    if (isTimerRunning && timeLeft > 0) interval = window.setInterval(() => setTimeLeft(t => t - 1), 1000);
-    else if (timeLeft === 0) {
+    if (isTimerRunning && timeLeft > 0) {
+      interval = window.setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else if (timeLeft === 0) {
       setIsTimerRunning(false);
       setToast("Tempo de descanso finalizado!");
       setTimeout(() => setToast(''), 2200);
@@ -302,7 +319,9 @@ function App() {
   }, [isTimerRunning, timeLeft]);
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentQuoteIndex(i => (i + 1) % motivationalQuotes[currentLang].length), 5000);
+    const interval = setInterval(() => {
+      setCurrentQuoteIndex(i => (i + 1) % motivationalQuotes[currentLang].length);
+    }, 5000);
     return () => clearInterval(interval);
   }, [currentLang]);
 
@@ -348,17 +367,55 @@ function App() {
   };
 
   const getRecommendedWorkouts = () => {
-    if (!currentUser) return [t('fullBody')];
-    return [t('recommendedPushPull6'), t('recommendedUpperLower4')];
+    if (!currentUser?.goal) return [t('recommendedFullBodyCardio')];
+    switch (currentUser.goal) {
+      case "Ganho de massa": return [t('recommendedPushPull6'), "Hypertrophy 5x5"];
+      case "Perda de gordura": return [t('recommendedCircuitHIIT'), t('recommendedFullBodyCardio')];
+      case "Força": return ["5x5 Strength", t('recommendedPushPull6')];
+      case "Resistência": return [t('recommendedCircuitHIIT'), "Endurance Circuit"];
+      default: return [t('recommendedUpperLower4'), t('recommendedFullBodyCardio')];
+    }
   };
 
   const loadTemplate = (templateKey: string) => {
     let exercises: any[] = [];
-    if (templateKey === 'chestTriceps') exercises = [{ id: Date.now()+1, name: "Supino Reto", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" }];
-    if (templateKey === 'backBiceps') exercises = [{ id: Date.now()+1, name: "Barra Fixa", muscle: "Costas", sets: "4", reps: "8-10", weight: "" }];
-    if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: "Agachamento Livre", muscle: "Pernas", sets: "4", reps: "8-10", weight: "90" }];
-    if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: "Desenvolvimento Militar", muscle: "Ombros", sets: "4", reps: "8-10", weight: "45" }];
-    if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: "Agachamento", muscle: "Pernas", sets: "4", reps: "8", weight: "80" }];
+
+    if (templateKey === 'chestTriceps') {
+      exercises = [
+        { id: Date.now()+1, name: currentLang === 'pt' ? "Supino Reto" : currentLang === 'es' ? "Press de Banca Plano" : "Flat Bench Press", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" },
+        { id: Date.now()+2, name: currentLang === 'pt' ? "Supino Inclinado" : currentLang === 'es' ? "Press Inclinado" : "Incline Bench Press", muscle: "Peito", sets: "3", reps: "10-12", weight: "60" },
+        { id: Date.now()+3, name: currentLang === 'pt' ? "Crucifixo" : currentLang === 'es' ? "Apertura de Pecho" : "Chest Fly", muscle: "Peito", sets: "3", reps: "12-15", weight: "25" },
+        { id: Date.now()+4, name: currentLang === 'pt' ? "Tríceps Francês" : currentLang === 'es' ? "Extensión Tríceps" : "Tricep Extension", muscle: "Tríceps", sets: "3", reps: "10-12", weight: "30" }
+      ];
+    }
+    if (templateKey === 'backBiceps') {
+      exercises = [
+        { id: Date.now()+1, name: currentLang === 'pt' ? "Barra Fixa" : currentLang === 'es' ? "Dominadas" : "Pull-ups", muscle: "Costas", sets: "4", reps: "6-8", weight: "" },
+        { id: Date.now()+2, name: currentLang === 'pt' ? "Remada Curvada" : currentLang === 'es' ? "Remo con Barra" : "Bent Over Row", muscle: "Costas", sets: "4", reps: "8-10", weight: "80" },
+        { id: Date.now()+3, name: currentLang === 'pt' ? "Rosca Bíceps" : currentLang === 'es' ? "Curl de Bíceps" : "Bicep Curl", muscle: "Bíceps", sets: "3", reps: "10-12", weight: "20" }
+      ];
+    }
+    if (templateKey === 'legs') {
+      exercises = [
+        { id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento Livre" : currentLang === 'es' ? "Sentadilla Libre" : "Barbell Squat", muscle: "Pernas", sets: "4", reps: "8-10", weight: "100" },
+        { id: Date.now()+2, name: currentLang === 'pt' ? "Leg Press" : currentLang === 'es' ? "Prensa de Piernas" : "Leg Press", muscle: "Pernas", sets: "3", reps: "10-12", weight: "200" },
+        { id: Date.now()+3, name: currentLang === 'pt' ? "Cadeira Extensora" : currentLang === 'es' ? "Extensión de Cuádriceps" : "Leg Extension", muscle: "Pernas", sets: "3", reps: "12-15", weight: "60" }
+      ];
+    }
+    if (templateKey === 'shoulders') {
+      exercises = [
+        { id: Date.now()+1, name: currentLang === 'pt' ? "Desenvolvimento Militar" : currentLang === 'es' ? "Press Militar" : "Overhead Press", muscle: "Ombros", sets: "4", reps: "8-10", weight: "50" },
+        { id: Date.now()+2, name: currentLang === 'pt' ? "Elevação Lateral" : currentLang === 'es' ? "Elevación Lateral" : "Lateral Raise", muscle: "Ombros", sets: "3", reps: "12-15", weight: "15" }
+      ];
+    }
+    if (templateKey === 'fullBody') {
+      exercises = [
+        { id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento" : currentLang === 'es' ? "Sentadilla" : "Squat", muscle: "Pernas", sets: "4", reps: "8", weight: "80" },
+        { id: Date.now()+2, name: currentLang === 'pt' ? "Supino" : currentLang === 'es' ? "Press de Banca" : "Bench Press", muscle: "Peito", sets: "4", reps: "8", weight: "70" },
+        { id: Date.now()+3, name: currentLang === 'pt' ? "Remada" : currentLang === 'es' ? "Remo" : "Row", muscle: "Costas", sets: "3", reps: "10", weight: "60" }
+      ];
+    }
+
     setCurrentWorkout([...currentWorkout, ...exercises]);
     setToast("Template carregado!");
     setTimeout(() => setToast(''), 2200);
@@ -370,6 +427,14 @@ function App() {
     setNewExercise({ name: '', sets: '', reps: '', weight: '', muscle: '' });
   };
 
+  const editWorkout = (workout: any) => {
+    setCurrentWorkout(workout.exercises || []);
+    setWorkoutName(workout.name || '');
+    changePage('treinos');
+    setToast('Treino carregado para edição');
+    setTimeout(() => setToast(''), 2000);
+  };
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-zinc-950 to-black flex items-center justify-center p-6">
@@ -377,17 +442,21 @@ function App() {
           <img src="/pinscher-mascot.png" alt="PumPinscher" className="w-32 h-32 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-center text-white mb-2">{t('loginTitle')}</h1>
           <p className="text-orange-400 text-center mb-8">o pinscher que não desiste</p>
+
           <div className="flex justify-center gap-2 mb-8">
             {(['pt','es','en'] as Lang[]).map(l => (
               <button key={l} onClick={() => setCurrentLang(l)} className={`px-5 py-2 rounded-2xl ${currentLang === l ? 'bg-orange-500 text-white' : 'bg-zinc-800 text-white'}`}>{l.toUpperCase()}</button>
             ))}
           </div>
+
           {isRegisterMode && <input type="text" placeholder={t('namePlaceholder')} value={name} onChange={e => setName(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-4" />}
           <input type="email" placeholder={t('emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-4" />
           <input type="password" placeholder={t('passwordPlaceholder')} value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-8" />
+
           <button onClick={isRegisterMode ? handleRegister : handleLogin} className="w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xl font-bold rounded-3xl">
             {isRegisterMode ? t('registerButton') : t('enterButton')}
           </button>
+
           <button onClick={() => setIsRegisterMode(!isRegisterMode)} className="text-orange-400 text-center w-full mt-6 hover:underline">
             {isRegisterMode ? 'Já tem conta? Entrar' : 'Criar conta'}
           </button>
@@ -439,7 +508,7 @@ function App() {
 
       <AnimatePresence mode="wait">
         <motion.main key={currentPage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-7xl mx-auto px-8 py-10">
-          {/* DASHBOARD */}
+          
           {currentPage === 'dashboard' && (
             <div className="max-w-6xl mx-auto">
               <h1 className="text-6xl font-black">{t('dashboardGreeting')}{currentUser?.name}! {t('dashboardSub')}</h1>
@@ -463,13 +532,30 @@ function App() {
                   <p className="text-7xl font-black mt-4">7 🔥</p>
                 </div>
               </div>
+              <div className="bg-zinc-900 rounded-3xl p-8 text-center mt-12">
+                <p className="text-orange-400">{t('recommendedWorkouts')}</p>
+                <div className="mt-6 space-y-3">
+                  {getRecommendedWorkouts().map((rec, i) => <p key={i} className="text-orange-400 text-lg">{rec}</p>)}
+                </div>
+              </div>
             </div>
           )}
 
-          {/* TREINOS */}
           {currentPage === 'treinos' && (
             <div className="max-w-3xl mx-auto">
               <h2 className="text-4xl font-bold mb-8 text-orange-400">{t('newWorkout')}</h2>
+              
+              <div className="bg-zinc-900 rounded-3xl p-8 mb-8">
+                <label className="block text-sm text-zinc-400 mb-2">{t('workoutName')}</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Treino de Peito - Segunda"
+                  value={workoutName}
+                  onChange={e => setWorkoutName(e.target.value)}
+                  className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 text-lg"
+                />
+              </div>
+
               <div className="bg-zinc-900 rounded-3xl p-8 mb-10">
                 <p className="text-orange-400 font-medium mb-2">{t('restTimer')}</p>
                 <div className="text-8xl font-mono font-bold text-center mb-8">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</div>
@@ -496,14 +582,24 @@ function App() {
               {currentWorkout.length > 0 && (
                 <div className="space-y-4 mb-12">
                   {currentWorkout.map((ex, i) => (
-                    <div key={ex.id} className="bg-zinc-800 rounded-2xl p-5 grid grid-cols-5 gap-4 items-center">
-                      <div className="col-span-2">
+                    <div key={ex.id} className="bg-zinc-800 rounded-3xl p-6 grid grid-cols-12 gap-4 items-center">
+                      <div className="col-span-4">
                         <p className="font-medium">{ex.name}</p>
                         <p className="text-xs text-orange-400">{ex.muscle}</p>
                       </div>
-                      <input type="number" value={ex.sets} onChange={e => { const arr = [...currentWorkout]; arr[i].sets = e.target.value; setCurrentWorkout(arr); }} className="bg-zinc-700 text-center rounded-xl py-3 text-white" />
-                      <input type="number" value={ex.reps} onChange={e => { const arr = [...currentWorkout]; arr[i].reps = e.target.value; setCurrentWorkout(arr); }} className="bg-zinc-700 text-center rounded-xl py-3 text-white" />
-                      <input type="number" value={ex.weight} onChange={e => { const arr = [...currentWorkout]; arr[i].weight = e.target.value; setCurrentWorkout(arr); }} className="bg-zinc-700 text-center rounded-xl py-3 text-white" />
+                      <div className="col-span-2">
+                        <p className="text-xs text-zinc-400 mb-1">{t('setsLabel')}</p>
+                        <input type="number" min="0" value={ex.sets} onChange={e => { const val = Math.max(0, parseInt(e.target.value) || 0); const arr = [...currentWorkout]; arr[i].sets = val.toString(); setCurrentWorkout(arr); }} className="w-full bg-zinc-700 text-center rounded-2xl py-3 text-white" />
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-xs text-zinc-400 mb-1">{t('repsLabel')}</p>
+                        <input type="number" min="0" value={ex.reps} onChange={e => { const val = Math.max(0, parseInt(e.target.value) || 0); const arr = [...currentWorkout]; arr[i].reps = val.toString(); setCurrentWorkout(arr); }} className="w-full bg-zinc-700 text-center rounded-2xl py-3 text-white" />
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-xs text-zinc-400 mb-1">{t('weightLabel')}</p>
+                        <input type="number" min="0" value={ex.weight} onChange={e => { const val = Math.max(0, parseFloat(e.target.value) || 0); const arr = [...currentWorkout]; arr[i].weight = val.toString(); setCurrentWorkout(arr); }} className="w-full bg-zinc-700 text-center rounded-2xl py-3 text-white" />
+                      </div>
+                      <button onClick={() => setCurrentWorkout(currentWorkout.filter((_, idx) => idx !== i))} className="col-span-2 text-red-400 hover:text-red-500 text-sm font-medium">Remover</button>
                     </div>
                   ))}
                 </div>
@@ -511,15 +607,21 @@ function App() {
 
               <div className="bg-zinc-900 rounded-3xl p-8 mb-8">
                 <h3 className="font-semibold mb-6">{t('addMoreExercises')}</h3>
-                <div className="grid grid-cols-5 gap-4">
-                  <input type="text" placeholder={t('exerciseName')} value={newExercise.name} onChange={e => setNewExercise({...newExercise, name: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-white col-span-2" />
-                  <select value={newExercise.muscle} onChange={e => setNewExercise({...newExercise, muscle: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-white">
+                <div className="grid grid-cols-12 gap-4">
+                  <input type="text" placeholder={t('exerciseName')} value={newExercise.name} onChange={e => setNewExercise({...newExercise, name: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-white col-span-5" />
+                  <select value={newExercise.muscle} onChange={e => setNewExercise({...newExercise, muscle: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-white col-span-3">
                     <option value="">{t('muscle')}</option>
                     {muscleOptions[currentLang].map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
-                  <input type="number" placeholder={t('sets')} value={newExercise.sets} onChange={e => setNewExercise({...newExercise, sets: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-center text-white" />
-                  <input type="number" placeholder={t('reps')} value={newExercise.reps} onChange={e => setNewExercise({...newExercise, reps: e.target.value})} className="bg-zinc-800 px-4 py-4 rounded-2xl text-center text-white" />
-                  <button onClick={addExercise} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl col-span-5 md:col-span-1">{t('addExercise')}</button>
+                  <div className="col-span-2">
+                    <p className="text-xs text-zinc-400 mb-1">{t('setsLabel')}</p>
+                    <input type="number" min="0" placeholder={t('sets')} value={newExercise.sets} onChange={e => setNewExercise({...newExercise, sets: e.target.value})} className="w-full bg-zinc-800 px-4 py-4 rounded-2xl text-center text-white" />
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-zinc-400 mb-1">{t('repsLabel')}</p>
+                    <input type="number" min="0" placeholder={t('reps')} value={newExercise.reps} onChange={e => setNewExercise({...newExercise, reps: e.target.value})} className="w-full bg-zinc-800 px-4 py-4 rounded-2xl text-center text-white" />
+                  </div>
+                  <button onClick={addExercise} className="col-span-12 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-3xl py-4 mt-4">{t('addExercise')}</button>
                 </div>
               </div>
 
@@ -527,7 +629,6 @@ function App() {
             </div>
           )}
 
-          {/* PROGRESSO */}
           {currentPage === 'progresso' && (
             <div className="max-w-4xl mx-auto">
               <h2 className="text-4xl font-bold mb-8">{t('progresso')}</h2>
@@ -536,47 +637,22 @@ function App() {
               ) : (
                 <div className="space-y-4">
                   {workoutHistory.map((workout: any) => (
-                    <motion.div key={workout.id} whileHover={{ scale: 1.02 }} onClick={() => setSelectedWorkout(workout)} className="bg-zinc-900 rounded-3xl p-6 flex justify-between items-center cursor-pointer">
-                      <div>
+                    <div key={workout.id} className="bg-zinc-900 rounded-3xl p-6 flex justify-between items-center">
+                      <div className="flex-1">
                         <p className="font-medium">{workout.name}</p>
                         <p className="text-sm text-zinc-400">{workout.date}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="flex items-center gap-4">
                         <p className="text-orange-400 font-semibold">{workout.totalReps} {t('totalReps')}</p>
+                        <button onClick={() => editWorkout(workout)} className="px-5 py-2 bg-orange-500 hover:bg-orange-600 rounded-2xl text-sm font-medium">{t('edit')}</button>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               )}
-              <AnimatePresence>
-                {selectedWorkout && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-6" onClick={() => setSelectedWorkout(null)}>
-                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-zinc-900 max-w-2xl w-full rounded-3xl p-8">
-                      <h2 className="text-3xl font-bold mb-2">{selectedWorkout.name}</h2>
-                      <p className="text-orange-400 mb-8">{selectedWorkout.date}</p>
-                      <div className="space-y-4">
-                        {selectedWorkout.exercises.map((ex: any) => (
-                          <div key={ex.id} className="flex justify-between items-center bg-black/30 rounded-2xl p-5">
-                            <div>
-                              <p className="font-medium">{ex.name}</p>
-                              <p className="text-xs text-orange-400">{ex.muscle}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-sm">{ex.sets} séries × {ex.reps} reps</p>
-                              <p className="text-orange-400 font-semibold">{ex.weight} kg</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <button onClick={() => setSelectedWorkout(null)} className="mt-8 w-full py-5 text-lg font-bold bg-orange-500 rounded-3xl">{t('close')}</button>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )}
 
-          {/* PERFIL */}
           {currentPage === 'perfil' && (
             <div className="max-w-4xl mx-auto">
               <h2 className="text-4xl font-bold mb-8">{t('perfil')}</h2>
@@ -592,11 +668,11 @@ function App() {
                   </div>
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">{t('yourWeight')}</label>
-                    <input type="number" value={currentUser?.weight || ''} onChange={e => setCurrentUser({...currentUser, weight: parseFloat(e.target.value) || null})} className="w-full bg-zinc-800 rounded-2xl px-6 py-4 text-white" />
+                    <input type="number" min="0" value={currentUser?.weight || ''} onChange={e => setCurrentUser({...currentUser, weight: parseFloat(e.target.value) || null})} className="w-full bg-zinc-800 rounded-2xl px-6 py-4 text-white" />
                   </div>
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">{t('yourHeight')}</label>
-                    <input type="number" value={currentUser?.height || ''} onChange={e => setCurrentUser({...currentUser, height: parseFloat(e.target.value) || null})} className="w-full bg-zinc-800 rounded-2xl px-6 py-4 text-white" />
+                    <input type="number" min="0" value={currentUser?.height || ''} onChange={e => setCurrentUser({...currentUser, height: parseFloat(e.target.value) || null})} className="w-full bg-zinc-800 rounded-2xl px-6 py-4 text-white" />
                   </div>
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">{t('yourGoal')}</label>
