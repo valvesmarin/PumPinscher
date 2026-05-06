@@ -262,7 +262,6 @@ function App() {
 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [targetPage, setTargetPage] = useState<any>(null);
-  const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
 
   const t = (key: string) => translations[currentLang][key as keyof typeof translations['pt']] || key;
