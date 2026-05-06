@@ -79,7 +79,7 @@ PumPinscher/
 │   ├── pinscher-mascot.png
 │   └── pinscher-puxando.png
 └── README.md
-
+```
 ## 👨‍💻 Author
 Vitor Marin
 Student developer passionate about clean code, great UX, and building useful tools.
