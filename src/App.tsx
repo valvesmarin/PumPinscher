@@ -49,6 +49,7 @@ const translations = {
     shoulders: "Ombros",
     fullBody: "Full Body",
     workoutName: "Nome do Treino",
+    workoutNamePlaceholder: "Ex: Treino de Peito - Segunda",
     addMoreExercises: "Adicionar mais exercícios manualmente",
     startTimer: "Iniciar",
     pauseTimer: "Pausar",
@@ -126,6 +127,7 @@ const translations = {
     shoulders: "Hombros",
     fullBody: "Full Body",
     workoutName: "Nombre del Entrenamiento",
+    workoutNamePlaceholder: "Ej: Entrenamiento de Pecho - Lunes",
     addMoreExercises: "Añadir más ejercicios",
     startTimer: "Iniciar",
     pauseTimer: "Pausar",
@@ -203,6 +205,7 @@ const translations = {
     shoulders: "Shoulders",
     fullBody: "Full Body",
     workoutName: "Workout Name",
+    workoutNamePlaceholder: "Ex: Chest Workout - Monday",
     addMoreExercises: "Add more exercises",
     startTimer: "Start",
     pauseTimer: "Pause",
@@ -379,16 +382,48 @@ function App() {
     }
   };
 
+  // ==================== TEMPLATES PROFISSIONAIS (4-5 exercícios cada) ====================
   const loadTemplate = (templateKey: string) => {
     let exercises: any[] = [];
-    if (templateKey === 'chestTriceps') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Supino Reto" : currentLang === 'es' ? "Press de Banca Plano" : "Flat Bench Press", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" }];
-    if (templateKey === 'backBiceps') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Barra Fixa" : currentLang === 'es' ? "Dominadas" : "Pull-ups", muscle: "Costas", sets: "4", reps: "6-8", weight: "" }];
-    if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento Livre" : currentLang === 'es' ? "Sentadilla Libre" : "Barbell Squat", muscle: "Pernas", sets: "4", reps: "8-10", weight: "100" }];
-    if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Desenvolvimento Militar" : currentLang === 'es' ? "Press Militar" : "Overhead Press", muscle: "Ombros", sets: "4", reps: "8-10", weight: "50" }];
-    if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento" : currentLang === 'es' ? "Sentadilla" : "Squat", muscle: "Pernas", sets: "4", reps: "8", weight: "80" }];
+
+    if (templateKey === 'chestTriceps') {
+      exercises = [
+        { id: Date.now() + 1, name: currentLang === 'pt' ? "Supino Reto" : currentLang === 'es' ? "Press de Banca Plano" : "Flat Bench Press", muscle: currentLang === 'pt' ? "Peito" : currentLang === 'es' ? "Pecho" : "Chest", sets: "4", reps: "8-10", weight: "70" },
+        { id: Date.now() + 2, name: currentLang === 'pt' ? "Supino Inclinado" : currentLang === 'es' ? "Press Inclinado" : "Incline Bench Press", muscle: currentLang === 'pt' ? "Peito" : currentLang === 'es' ? "Pecho" : "Chest", sets: "3", reps: "10-12", weight: "60" },
+        { id: Date.now() + 3, name: currentLang === 'pt' ? "Crucifixo" : currentLang === 'es' ? "Apertura de Pecho" : "Chest Fly", muscle: currentLang === 'pt' ? "Peito" : currentLang === 'es' ? "Pecho" : "Chest", sets: "3", reps: "12-15", weight: "25" },
+        { id: Date.now() + 4, name: currentLang === 'pt' ? "Tríceps Francês" : currentLang === 'es' ? "Extensión Tríceps" : "Tricep Extension", muscle: currentLang === 'pt' ? "Tríceps" : currentLang === 'es' ? "Tríceps" : "Triceps", sets: "3", reps: "10-12", weight: "30" }
+      ];
+    }
+    if (templateKey === 'backBiceps') {
+      exercises = [
+        { id: Date.now() + 1, name: currentLang === 'pt' ? "Barra Fixa" : currentLang === 'es' ? "Dominadas" : "Pull-ups", muscle: currentLang === 'pt' ? "Costas" : currentLang === 'es' ? "Espalda" : "Back", sets: "4", reps: "6-8", weight: "" },
+        { id: Date.now() + 2, name: currentLang === 'pt' ? "Remada Curvada" : currentLang === 'es' ? "Remo con Barra" : "Bent Over Row", muscle: currentLang === 'pt' ? "Costas" : currentLang === 'es' ? "Espalda" : "Back", sets: "4", reps: "8-10", weight: "80" },
+        { id: Date.now() + 3, name: currentLang === 'pt' ? "Rosca Bíceps" : currentLang === 'es' ? "Curl de Bíceps" : "Bicep Curl", muscle: currentLang === 'pt' ? "Bíceps" : currentLang === 'es' ? "Bíceps" : "Biceps", sets: "3", reps: "10-12", weight: "20" }
+      ];
+    }
+    if (templateKey === 'legs') {
+      exercises = [
+        { id: Date.now() + 1, name: currentLang === 'pt' ? "Agachamento Livre" : currentLang === 'es' ? "Sentadilla Libre" : "Barbell Squat", muscle: currentLang === 'pt' ? "Pernas" : currentLang === 'es' ? "Piernas" : "Legs", sets: "4", reps: "8-10", weight: "100" },
+        { id: Date.now() + 2, name: currentLang === 'pt' ? "Leg Press" : currentLang === 'es' ? "Prensa de Piernas" : "Leg Press", muscle: currentLang === 'pt' ? "Pernas" : currentLang === 'es' ? "Piernas" : "Legs", sets: "3", reps: "10-12", weight: "200" },
+        { id: Date.now() + 3, name: currentLang === 'pt' ? "Cadeira Extensora" : currentLang === 'es' ? "Extensión de Cuádriceps" : "Leg Extension", muscle: currentLang === 'pt' ? "Pernas" : currentLang === 'es' ? "Piernas" : "Legs", sets: "3", reps: "12-15", weight: "60" }
+      ];
+    }
+    if (templateKey === 'shoulders') {
+      exercises = [
+        { id: Date.now() + 1, name: currentLang === 'pt' ? "Desenvolvimento Militar" : currentLang === 'es' ? "Press Militar" : "Overhead Press", muscle: currentLang === 'pt' ? "Ombros" : currentLang === 'es' ? "Hombros" : "Shoulders", sets: "4", reps: "8-10", weight: "50" },
+        { id: Date.now() + 2, name: currentLang === 'pt' ? "Elevação Lateral" : currentLang === 'es' ? "Elevación Lateral" : "Lateral Raise", muscle: currentLang === 'pt' ? "Ombros" : currentLang === 'es' ? "Hombros" : "Shoulders", sets: "3", reps: "12-15", weight: "15" }
+      ];
+    }
+    if (templateKey === 'fullBody') {
+      exercises = [
+        { id: Date.now() + 1, name: currentLang === 'pt' ? "Agachamento" : currentLang === 'es' ? "Sentadilla" : "Squat", muscle: currentLang === 'pt' ? "Pernas" : currentLang === 'es' ? "Piernas" : "Legs", sets: "4", reps: "8", weight: "80" },
+        { id: Date.now() + 2, name: currentLang === 'pt' ? "Supino" : currentLang === 'es' ? "Press de Banca" : "Bench Press", muscle: currentLang === 'pt' ? "Peito" : currentLang === 'es' ? "Pecho" : "Chest", sets: "4", reps: "8", weight: "70" },
+        { id: Date.now() + 3, name: currentLang === 'pt' ? "Remada" : currentLang === 'es' ? "Remo" : "Row", muscle: currentLang === 'pt' ? "Costas" : currentLang === 'es' ? "Espalda" : "Back", sets: "3", reps: "10", weight: "60" }
+      ];
+    }
 
     setCurrentWorkout([...currentWorkout, ...exercises]);
-    setToast("Template carregado!");
+    setToast(currentLang === 'pt' ? "Template carregado!" : currentLang === 'es' ? "¡Plantilla cargada!" : "Template loaded!");
     setTimeout(() => setToast(''), 2200);
   };
 
@@ -520,7 +555,7 @@ function App() {
                 <label className="block text-sm text-zinc-400 mb-2">{t('workoutName')}</label>
                 <input
                   type="text"
-                  placeholder="Ex: Treino de Peito - Segunda"
+                  placeholder={t('workoutNamePlaceholder')}
                   value={workoutName}
                   onChange={e => setWorkoutName(e.target.value)}
                   className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 text-lg"
