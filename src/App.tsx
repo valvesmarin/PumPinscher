@@ -328,9 +328,9 @@ function App() {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: number | null = null;
     if (isTimerRunning && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+      interval = window.setInterval(() => setTimeLeft(t => t - 1), 1000);
     } else if (timeLeft === 0) {
       setIsTimerRunning(false);
       setToast("Tempo de descanso finalizado!");
@@ -500,7 +500,6 @@ function App() {
           {currentPage === 'treinos' && (
             <div className="max-w-3xl mx-auto">
               <h2 className="text-4xl font-bold mb-8 text-orange-400">{t('newWorkout')}</h2>
-              
               <div className="bg-zinc-900 rounded-3xl p-8 mb-10">
                 <p className="text-orange-400 font-medium mb-2">{t('restTimer')}</p>
                 <div className="text-8xl font-mono font-bold text-center mb-8">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</div>
@@ -581,7 +580,7 @@ function App() {
               <AnimatePresence>
                 {selectedWorkout && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-6" onClick={() => setSelectedWorkout(null)}>
-                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} onClick={e => e.stopImmediatePropagation()} className="bg-zinc-900 max-w-2xl w-full rounded-3xl p-8">
+                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-zinc-900 max-w-2xl w-full rounded-3xl p-8">
                       <h2 className="text-3xl font-bold mb-2">{selectedWorkout.name}</h2>
                       <p className="text-orange-400 mb-8">{selectedWorkout.date}</p>
                       <div className="space-y-4">
