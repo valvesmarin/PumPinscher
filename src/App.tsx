@@ -259,42 +259,9 @@ function App() {
   };
 
   const motivationalQuotes = {
-    pt: [
-      "Tudo posso naquele que me fortalece. — Filipenses 4:13",
-      "Não temas, pois eu sou contigo. — Isaías 41:10",
-      "A dor de hoje é a força de amanhã.",
-      "Disciplina é a ponte entre seus objetivos e suas conquistas.",
-      "Levante-se, sacuda a poeira e continue lutando.",
-      "Seja a versão que você sempre quis ser.",
-      "A raiva é combustível. Use-a para vencer.",
-      "Sofrer agora ou sofrer depois. A escolha é sua.",
-      "Não pare quando estiver cansado. Pare quando estiver feito.",
-      "O corpo conquista o que a mente acredita."
-    ],
-    es: [
-      "Todo lo puedo en Cristo que me fortalece. — Filipenses 4:13",
-      "No temas, porque yo estoy contigo. — Isaías 41:10",
-      "El dolor de hoy es la fuerza de mañana.",
-      "La disciplina es el puente entre tus objetivos y tus logros.",
-      "Levántate, sacude el polvo y sigue luchando.",
-      "Sé la versión que siempre quisiste ser.",
-      "La rabia es combustible. Úsala para ganar.",
-      "Sufrir ahora o sufrir después. La elección es tuya.",
-      "No pares cuando estés cansado. Para cuando estés hecho.",
-      "El cuerpo conquista lo que la mente cree."
-    ],
-    en: [
-      "I can do all things through Christ who strengthens me. — Philippians 4:13",
-      "Fear not, for I am with you. — Isaiah 41:10",
-      "Today's pain is tomorrow's strength.",
-      "Discipline is the bridge between your goals and your achievements.",
-      "Get up, shake off the dust and keep fighting.",
-      "Be the version you always wanted to be.",
-      "Anger is fuel. Use it to win.",
-      "Suffer now or suffer later. The choice is yours.",
-      "Don't stop when you're tired. Stop when you're done.",
-      "The body achieves what the mind believes."
-    ]
+    pt: ["Tudo posso naquele que me fortalece. — Filipenses 4:13", "Não temas, pois eu sou contigo. — Isaías 41:10", "A dor de hoje é a força de amanhã.", "Disciplina é a ponte entre seus objetivos e suas conquistas.", "Levante-se, sacuda a poeira e continue lutando.", "Seja a versão que você sempre quis ser.", "A raiva é combustível. Use-a para vencer.", "Sofrer agora ou sofrer depois. A escolha é sua.", "Não pare quando estiver cansado. Pare quando estiver feito.", "O corpo conquista o que a mente acredita."],
+    es: ["Todo lo puedo en Cristo que me fortalece. — Filipenses 4:13", "No temas, porque yo estoy contigo. — Isaías 41:10", "El dolor de hoy es la fuerza de mañana.", "La disciplina es el puente entre tus objetivos y tus logros.", "Levántate, sacude el polvo y sigue luchando.", "Sé la versión que siempre quisiste ser.", "La rabia es combustible. Úsala para ganar.", "Sufrir ahora o sufrir después. La elección es tuya.", "No pares cuando estés cansado. Para cuando estés hecho.", "El cuerpo conquista lo que la mente cree."],
+    en: ["I can do all things through Christ who strengthens me. — Philippians 4:13", "Fear not, for I am with you. — Isaiah 41:10", "Today's pain is tomorrow's strength.", "Discipline is the bridge between your goals and your achievements.", "Get up, shake off the dust and keep fighting.", "Be the version you always wanted to be.", "Anger is fuel. Use it to win.", "Suffer now or suffer later. The choice is yours.", "Don't stop when you're tired. Stop when you're done.", "The body achieves what the mind believes."]
   };
 
   const fetchWorkouts = async (userEmail: string) => {
@@ -310,14 +277,10 @@ function App() {
       userEmail: currentUser.email,
       name: workoutName.trim() || `Treino ${Date.now()}`,
       exercises: currentWorkout,
-      totalReps: currentWorkout.reduce((acc, ex) => acc + (parseInt(ex.reps) || 0), 0)
+      totalReps: currentWorkout.reduce((acc: number, ex: any) => acc + (parseInt(ex.reps) || 0), 0)
     };
     try {
-      const res = await fetch(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(API_BASE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       if (res.ok) {
         setToast(t('toastSaved'));
         fetchWorkouts(currentUser.email);
@@ -329,9 +292,8 @@ function App() {
 
   useEffect(() => {
     let interval: number | null = null;
-    if (isTimerRunning && timeLeft > 0) {
-      interval = window.setInterval(() => setTimeLeft(t => t - 1), 1000);
-    } else if (timeLeft === 0) {
+    if (isTimerRunning && timeLeft > 0) interval = window.setInterval(() => setTimeLeft(t => t - 1), 1000);
+    else if (timeLeft === 0) {
       setIsTimerRunning(false);
       setToast("Tempo de descanso finalizado!");
       setTimeout(() => setToast(''), 2200);
@@ -340,9 +302,7 @@ function App() {
   }, [isTimerRunning, timeLeft]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentQuoteIndex(i => (i + 1) % motivationalQuotes[currentLang].length);
-    }, 5000);
+    const interval = setInterval(() => setCurrentQuoteIndex(i => (i + 1) % motivationalQuotes[currentLang].length), 5000);
     return () => clearInterval(interval);
   }, [currentLang]);
 
@@ -399,7 +359,6 @@ function App() {
     if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: "Agachamento Livre", muscle: "Pernas", sets: "4", reps: "8-10", weight: "90" }];
     if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: "Desenvolvimento Militar", muscle: "Ombros", sets: "4", reps: "8-10", weight: "45" }];
     if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: "Agachamento", muscle: "Pernas", sets: "4", reps: "8", weight: "80" }];
-
     setCurrentWorkout([...currentWorkout, ...exercises]);
     setToast("Template carregado!");
     setTimeout(() => setToast(''), 2200);
@@ -418,21 +377,17 @@ function App() {
           <img src="/pinscher-mascot.png" alt="PumPinscher" className="w-32 h-32 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-center text-white mb-2">{t('loginTitle')}</h1>
           <p className="text-orange-400 text-center mb-8">o pinscher que não desiste</p>
-
           <div className="flex justify-center gap-2 mb-8">
             {(['pt','es','en'] as Lang[]).map(l => (
               <button key={l} onClick={() => setCurrentLang(l)} className={`px-5 py-2 rounded-2xl ${currentLang === l ? 'bg-orange-500 text-white' : 'bg-zinc-800 text-white'}`}>{l.toUpperCase()}</button>
             ))}
           </div>
-
           {isRegisterMode && <input type="text" placeholder={t('namePlaceholder')} value={name} onChange={e => setName(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-4" />}
           <input type="email" placeholder={t('emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-4" />
           <input type="password" placeholder={t('passwordPlaceholder')} value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-zinc-800 text-white rounded-2xl px-6 py-5 mb-8" />
-
           <button onClick={isRegisterMode ? handleRegister : handleLogin} className="w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xl font-bold rounded-3xl">
             {isRegisterMode ? t('registerButton') : t('enterButton')}
           </button>
-
           <button onClick={() => setIsRegisterMode(!isRegisterMode)} className="text-orange-400 text-center w-full mt-6 hover:underline">
             {isRegisterMode ? 'Já tem conta? Entrar' : 'Criar conta'}
           </button>
@@ -450,12 +405,23 @@ function App() {
             <h1 className="text-3xl font-black tracking-[-2px] bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">PumPinscher</h1>
           </div>
           <nav className="flex gap-8 text-lg font-medium">
-            <button onClick={() => changePage('dashboard')} className={currentPage === 'dashboard' ? 'text-orange-400' : ''}>{t('dashboard')}</button>
-            <button onClick={() => changePage('treinos')} className={currentPage === 'treinos' ? 'text-orange-400' : ''}>{t('treinos')}</button>
-            <button onClick={() => changePage('progresso')} className={currentPage === 'progresso' ? 'text-orange-400' : ''}>{t('progresso')}</button>
-            <button onClick={() => changePage('perfil')} className={currentPage === 'perfil' ? 'text-orange-400' : ''}>{t('perfil')}</button>
+            {[
+              { page: 'dashboard', label: t('dashboard') },
+              { page: 'treinos', label: t('treinos') },
+              { page: 'progresso', label: t('progresso') },
+              { page: 'perfil', label: t('perfil') }
+            ].map(({ page, label }) => (
+              <button
+                key={page}
+                onClick={() => changePage(page as any)}
+                className={`relative group transition-all duration-300 hover:scale-105 hover:text-orange-400 ${currentPage === page ? 'text-orange-400' : 'text-white'}`}
+              >
+                {label}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-400 transition-all duration-300 group-hover:w-full"></span>
+              </button>
+            ))}
           </nav>
-          <button onClick={logout} className="text-sm text-zinc-400 hover:text-white">{t('logout')}</button>
+          <button onClick={logout} className="text-sm text-zinc-400 hover:text-white">Sair</button>
         </div>
       </header>
 
@@ -473,12 +439,15 @@ function App() {
 
       <AnimatePresence mode="wait">
         <motion.main key={currentPage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-7xl mx-auto px-8 py-10">
+          {/* DASHBOARD */}
           {currentPage === 'dashboard' && (
             <div className="max-w-6xl mx-auto">
               <h1 className="text-6xl font-black">{t('dashboardGreeting')}{currentUser?.name}! {t('dashboardSub')}</h1>
-              <motion.div key={currentQuoteIndex} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="mt-8 max-w-md text-right">
-                <p className="text-2xl italic">"{motivationalQuotes[currentLang][currentQuoteIndex]}"</p>
-                <p className="text-orange-400 text-sm mt-3">{t('forceDetermination')}</p>
+              <motion.div key={currentQuoteIndex} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="mt-12 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-orange-400/30 rounded-3xl p-12 shadow-2xl">
+                <div className="max-w-2xl mx-auto text-center">
+                  <p className="text-3xl italic leading-relaxed text-white">"{motivationalQuotes[currentLang][currentQuoteIndex]}"</p>
+                  <p className="text-orange-400 text-sm mt-8 font-medium tracking-widest">{t('forceDetermination')}</p>
+                </div>
               </motion.div>
               <div className="grid grid-cols-3 gap-6 mt-12">
                 <div className="bg-zinc-900 rounded-3xl p-8 text-center hover:scale-105 transition-transform">
@@ -487,7 +456,7 @@ function App() {
                 </div>
                 <div className="bg-zinc-900 rounded-3xl p-8 text-center hover:scale-105 transition-transform">
                   <p className="text-orange-400 text-sm font-medium">{t('totalVolume')}</p>
-                  <p className="text-7xl font-black mt-4">{workoutHistory.reduce((acc: number, w: any) => acc + w.totalReps, 0)}</p>
+                  <p className="text-7xl font-black mt-4">{workoutHistory.reduce((acc: number, w: any) => acc + (w.totalReps || 0), 0)}</p>
                 </div>
                 <div className="bg-zinc-900 rounded-3xl p-8 text-center hover:scale-105 transition-transform">
                   <p className="text-orange-400 text-sm font-medium">{t('currentStreak')}</p>
@@ -497,6 +466,7 @@ function App() {
             </div>
           )}
 
+          {/* TREINOS */}
           {currentPage === 'treinos' && (
             <div className="max-w-3xl mx-auto">
               <h2 className="text-4xl font-bold mb-8 text-orange-400">{t('newWorkout')}</h2>
@@ -504,7 +474,7 @@ function App() {
                 <p className="text-orange-400 font-medium mb-2">{t('restTimer')}</p>
                 <div className="text-8xl font-mono font-bold text-center mb-8">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</div>
                 <div className="flex flex-wrap gap-2 mb-8">
-                  {[30, 60, 90, 120, 180, 240, 300].map(time => (
+                  {[30,60,90,120,180,240,300].map(time => (
                     <button key={time} onClick={() => { setRestTime(time); setTimeLeft(time); setIsTimerRunning(false); }} className={`px-5 py-3 rounded-2xl text-sm font-medium transition-all ${restTime === time ? 'bg-orange-500 text-white' : 'bg-zinc-800 hover:bg-zinc-700'}`}>
                       {time < 60 ? `${time}s` : `${Math.floor(time/60)}:${(time%60).toString().padStart(2, '0')}`}
                     </button>
@@ -518,7 +488,7 @@ function App() {
               </div>
 
               <div className="grid grid-cols-5 gap-3 mb-8">
-                {['chestTriceps', 'backBiceps', 'legs', 'shoulders', 'fullBody'].map(key => (
+                {['chestTriceps','backBiceps','legs','shoulders','fullBody'].map(key => (
                   <button key={key} onClick={() => loadTemplate(key)} className="bg-zinc-800 hover:bg-zinc-700 py-4 rounded-2xl text-sm">{t(key as any)}</button>
                 ))}
               </div>
@@ -557,6 +527,7 @@ function App() {
             </div>
           )}
 
+          {/* PROGRESSO */}
           {currentPage === 'progresso' && (
             <div className="max-w-4xl mx-auto">
               <h2 className="text-4xl font-bold mb-8">{t('progresso')}</h2>
@@ -605,6 +576,7 @@ function App() {
             </div>
           )}
 
+          {/* PERFIL */}
           {currentPage === 'perfil' && (
             <div className="max-w-4xl mx-auto">
               <h2 className="text-4xl font-bold mb-8">{t('perfil')}</h2>
