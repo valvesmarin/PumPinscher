@@ -259,9 +259,42 @@ function App() {
   };
 
   const motivationalQuotes = {
-    pt: ["Tudo posso naquele que me fortalece. — Filipenses 4:13", "Não temas, pois eu sou contigo. — Isaías 41:10"],
-    es: ["Todo lo puedo en Cristo que me fortalece.", "No temas, porque yo estoy contigo."],
-    en: ["I can do all things through Christ who strengthens me.", "Fear not, for I am with you."]
+    pt: [
+      "Tudo posso naquele que me fortalece. — Filipenses 4:13",
+      "Não temas, pois eu sou contigo. — Isaías 41:10",
+      "A dor de hoje é a força de amanhã.",
+      "Disciplina é a ponte entre seus objetivos e suas conquistas.",
+      "Levante-se, sacuda a poeira e continue lutando.",
+      "Seja a versão que você sempre quis ser.",
+      "A raiva é combustível. Use-a para vencer.",
+      "Sofrer agora ou sofrer depois. A escolha é sua.",
+      "Não pare quando estiver cansado. Pare quando estiver feito.",
+      "O corpo conquista o que a mente acredita."
+    ],
+    es: [
+      "Todo lo puedo en Cristo que me fortalece. — Filipenses 4:13",
+      "No temas, porque yo estoy contigo. — Isaías 41:10",
+      "El dolor de hoy es la fuerza de mañana.",
+      "La disciplina es el puente entre tus objetivos y tus logros.",
+      "Levántate, sacude el polvo y sigue luchando.",
+      "Sé la versión que siempre quisiste ser.",
+      "La rabia es combustible. Úsala para ganar.",
+      "Sufrir ahora o sufrir después. La elección es tuya.",
+      "No pares cuando estés cansado. Para cuando estés hecho.",
+      "El cuerpo conquista lo que la mente cree."
+    ],
+    en: [
+      "I can do all things through Christ who strengthens me. — Philippians 4:13",
+      "Fear not, for I am with you. — Isaiah 41:10",
+      "Today's pain is tomorrow's strength.",
+      "Discipline is the bridge between your goals and your achievements.",
+      "Get up, shake off the dust and keep fighting.",
+      "Be the version you always wanted to be.",
+      "Anger is fuel. Use it to win.",
+      "Suffer now or suffer later. The choice is yours.",
+      "Don't stop when you're tired. Stop when you're done.",
+      "The body achieves what the mind believes."
+    ]
   };
 
   const fetchWorkouts = async (userEmail: string) => {
@@ -309,7 +342,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuoteIndex(i => (i + 1) % motivationalQuotes[currentLang].length);
-    }, 6000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [currentLang]);
 
@@ -361,11 +394,11 @@ function App() {
 
   const loadTemplate = (templateKey: string) => {
     let exercises: any[] = [];
-    if (templateKey === 'chestTriceps') exercises = [{ id: Date.now()+1, name: "Supino Reto", muscle: muscleOptions[currentLang][0], sets: "4", reps: "8-10", weight: "70" }];
-    if (templateKey === 'backBiceps') exercises = [{ id: Date.now()+1, name: "Barra Fixa", muscle: muscleOptions[currentLang][1], sets: "4", reps: "8-10", weight: "" }];
-    if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: "Agachamento Livre", muscle: muscleOptions[currentLang][2], sets: "4", reps: "8-10", weight: "90" }];
-    if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: "Desenvolvimento Militar", muscle: muscleOptions[currentLang][4], sets: "4", reps: "8-10", weight: "45" }];
-    if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: "Agachamento", muscle: muscleOptions[currentLang][2], sets: "4", reps: "8", weight: "80" }];
+    if (templateKey === 'chestTriceps') exercises = [{ id: Date.now()+1, name: "Supino Reto", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" }];
+    if (templateKey === 'backBiceps') exercises = [{ id: Date.now()+1, name: "Barra Fixa", muscle: "Costas", sets: "4", reps: "8-10", weight: "" }];
+    if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: "Agachamento Livre", muscle: "Pernas", sets: "4", reps: "8-10", weight: "90" }];
+    if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: "Desenvolvimento Militar", muscle: "Ombros", sets: "4", reps: "8-10", weight: "45" }];
+    if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: "Agachamento", muscle: "Pernas", sets: "4", reps: "8", weight: "80" }];
 
     setCurrentWorkout([...currentWorkout, ...exercises]);
     setToast("Template carregado!");
@@ -442,26 +475,12 @@ function App() {
         <motion.main key={currentPage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-7xl mx-auto px-8 py-10">
           {currentPage === 'dashboard' && (
             <div className="max-w-6xl mx-auto">
-              <div className="flex justify-between items-start mb-12">
-                <div>
-                  <h1 className="text-6xl font-black leading-none">{t('dashboardGreeting')}{currentUser?.name}!</h1>
-                  <p className="text-3xl text-orange-400 mt-3">{t('dashboardSub')}</p>
-                </div>
-              </div>
-
-              <motion.div 
-                key={currentQuoteIndex}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-zinc-900 to-black border border-orange-400/20 rounded-3xl p-12 mb-16 shadow-2xl"
-              >
-                <p className="text-3xl italic leading-relaxed text-white">
-                  "{motivationalQuotes[currentLang][currentQuoteIndex]}"
-                </p>
-                <p className="text-orange-400 text-sm mt-8 font-medium">{t('forceDetermination')}</p>
+              <h1 className="text-6xl font-black">{t('dashboardGreeting')}{currentUser?.name}! {t('dashboardSub')}</h1>
+              <motion.div key={currentQuoteIndex} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="mt-8 max-w-md text-right">
+                <p className="text-2xl italic">"{motivationalQuotes[currentLang][currentQuoteIndex]}"</p>
+                <p className="text-orange-400 text-sm mt-3">{t('forceDetermination')}</p>
               </motion.div>
-
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-6 mt-12">
                 <div className="bg-zinc-900 rounded-3xl p-8 text-center hover:scale-105 transition-transform">
                   <p className="text-orange-400 text-sm font-medium">{t('weeklyTrainings')}</p>
                   <p className="text-7xl font-black mt-4">{workoutHistory.length}</p>
@@ -473,17 +492,6 @@ function App() {
                 <div className="bg-zinc-900 rounded-3xl p-8 text-center hover:scale-105 transition-transform">
                   <p className="text-orange-400 text-sm font-medium">{t('currentStreak')}</p>
                   <p className="text-7xl font-black mt-4">7 🔥</p>
-                </div>
-              </div>
-
-              <div className="mt-16">
-                <h3 className="text-2xl font-semibold mb-6">{t('recommendedWorkouts')}</h3>
-                <div className="grid grid-cols-3 gap-6">
-                  {getRecommendedWorkouts().map((rec, i) => (
-                    <motion.div key={i} whileHover={{ scale: 1.05 }} className="bg-zinc-900 rounded-3xl p-8 text-center">
-                      <p className="font-medium text-xl text-orange-400">{rec}</p>
-                    </motion.div>
-                  ))}
                 </div>
               </div>
             </div>
