@@ -78,7 +78,8 @@ const translations = {
     setsLabel: "Séries",
     repsLabel: "Repetições",
     weightLabel: "Peso (kg)",
-    edit: "Editar"
+    edit: "Editar",
+    tagline: "o pinscher que não desiste"
   },
   es: {
     loginTitle: "Bienvenido a PumPinscher",
@@ -154,7 +155,8 @@ const translations = {
     setsLabel: "Series",
     repsLabel: "Repeticiones",
     weightLabel: "Peso (kg)",
-    edit: "Editar"
+    edit: "Editar",
+    tagline: "el pinscher que no se rinde"
   },
   en: {
     loginTitle: "Welcome to PumPinscher",
@@ -230,7 +232,8 @@ const translations = {
     setsLabel: "Sets",
     repsLabel: "Reps",
     weightLabel: "Weight (kg)",
-    edit: "Edit"
+    edit: "Edit",
+    tagline: "the pinscher that never quits"
   }
 } as const;
 
@@ -379,42 +382,11 @@ function App() {
 
   const loadTemplate = (templateKey: string) => {
     let exercises: any[] = [];
-
-    if (templateKey === 'chestTriceps') {
-      exercises = [
-        { id: Date.now()+1, name: currentLang === 'pt' ? "Supino Reto" : currentLang === 'es' ? "Press de Banca Plano" : "Flat Bench Press", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" },
-        { id: Date.now()+2, name: currentLang === 'pt' ? "Supino Inclinado" : currentLang === 'es' ? "Press Inclinado" : "Incline Bench Press", muscle: "Peito", sets: "3", reps: "10-12", weight: "60" },
-        { id: Date.now()+3, name: currentLang === 'pt' ? "Crucifixo" : currentLang === 'es' ? "Apertura de Pecho" : "Chest Fly", muscle: "Peito", sets: "3", reps: "12-15", weight: "25" },
-        { id: Date.now()+4, name: currentLang === 'pt' ? "Tríceps Francês" : currentLang === 'es' ? "Extensión Tríceps" : "Tricep Extension", muscle: "Tríceps", sets: "3", reps: "10-12", weight: "30" }
-      ];
-    }
-    if (templateKey === 'backBiceps') {
-      exercises = [
-        { id: Date.now()+1, name: currentLang === 'pt' ? "Barra Fixa" : currentLang === 'es' ? "Dominadas" : "Pull-ups", muscle: "Costas", sets: "4", reps: "6-8", weight: "" },
-        { id: Date.now()+2, name: currentLang === 'pt' ? "Remada Curvada" : currentLang === 'es' ? "Remo con Barra" : "Bent Over Row", muscle: "Costas", sets: "4", reps: "8-10", weight: "80" },
-        { id: Date.now()+3, name: currentLang === 'pt' ? "Rosca Bíceps" : currentLang === 'es' ? "Curl de Bíceps" : "Bicep Curl", muscle: "Bíceps", sets: "3", reps: "10-12", weight: "20" }
-      ];
-    }
-    if (templateKey === 'legs') {
-      exercises = [
-        { id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento Livre" : currentLang === 'es' ? "Sentadilla Libre" : "Barbell Squat", muscle: "Pernas", sets: "4", reps: "8-10", weight: "100" },
-        { id: Date.now()+2, name: currentLang === 'pt' ? "Leg Press" : currentLang === 'es' ? "Prensa de Piernas" : "Leg Press", muscle: "Pernas", sets: "3", reps: "10-12", weight: "200" },
-        { id: Date.now()+3, name: currentLang === 'pt' ? "Cadeira Extensora" : currentLang === 'es' ? "Extensión de Cuádriceps" : "Leg Extension", muscle: "Pernas", sets: "3", reps: "12-15", weight: "60" }
-      ];
-    }
-    if (templateKey === 'shoulders') {
-      exercises = [
-        { id: Date.now()+1, name: currentLang === 'pt' ? "Desenvolvimento Militar" : currentLang === 'es' ? "Press Militar" : "Overhead Press", muscle: "Ombros", sets: "4", reps: "8-10", weight: "50" },
-        { id: Date.now()+2, name: currentLang === 'pt' ? "Elevação Lateral" : currentLang === 'es' ? "Elevación Lateral" : "Lateral Raise", muscle: "Ombros", sets: "3", reps: "12-15", weight: "15" }
-      ];
-    }
-    if (templateKey === 'fullBody') {
-      exercises = [
-        { id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento" : currentLang === 'es' ? "Sentadilla" : "Squat", muscle: "Pernas", sets: "4", reps: "8", weight: "80" },
-        { id: Date.now()+2, name: currentLang === 'pt' ? "Supino" : currentLang === 'es' ? "Press de Banca" : "Bench Press", muscle: "Peito", sets: "4", reps: "8", weight: "70" },
-        { id: Date.now()+3, name: currentLang === 'pt' ? "Remada" : currentLang === 'es' ? "Remo" : "Row", muscle: "Costas", sets: "3", reps: "10", weight: "60" }
-      ];
-    }
+    if (templateKey === 'chestTriceps') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Supino Reto" : currentLang === 'es' ? "Press de Banca Plano" : "Flat Bench Press", muscle: "Peito", sets: "4", reps: "8-10", weight: "70" }];
+    if (templateKey === 'backBiceps') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Barra Fixa" : currentLang === 'es' ? "Dominadas" : "Pull-ups", muscle: "Costas", sets: "4", reps: "6-8", weight: "" }];
+    if (templateKey === 'legs') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento Livre" : currentLang === 'es' ? "Sentadilla Libre" : "Barbell Squat", muscle: "Pernas", sets: "4", reps: "8-10", weight: "100" }];
+    if (templateKey === 'shoulders') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Desenvolvimento Militar" : currentLang === 'es' ? "Press Militar" : "Overhead Press", muscle: "Ombros", sets: "4", reps: "8-10", weight: "50" }];
+    if (templateKey === 'fullBody') exercises = [{ id: Date.now()+1, name: currentLang === 'pt' ? "Agachamento" : currentLang === 'es' ? "Sentadilla" : "Squat", muscle: "Pernas", sets: "4", reps: "8", weight: "80" }];
 
     setCurrentWorkout([...currentWorkout, ...exercises]);
     setToast("Template carregado!");
@@ -441,7 +413,7 @@ function App() {
         <div className="max-w-md w-full bg-zinc-900 rounded-3xl p-10">
           <img src="/pinscher-mascot.png" alt="PumPinscher" className="w-32 h-32 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-center text-white mb-2">{t('loginTitle')}</h1>
-          <p className="text-orange-400 text-center mb-8">o pinscher que não desiste</p>
+          <p className="text-orange-400 text-center mb-8">{t('tagline')}</p>
 
           <div className="flex justify-center gap-2 mb-8">
             {(['pt','es','en'] as Lang[]).map(l => (
